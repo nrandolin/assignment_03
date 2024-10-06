@@ -22,7 +22,7 @@ forward_euler_fixed_step_integration(rate_func_in,tspan,X0,h_ref)
     t = tspan(1);
     X_list = [];
     %calculate the values until it is just short of the end value
-    for i = 1:num_steps-1
+    for i = 1:num_steps
         [XB, ~] = forward_euler_step(rate_func_in,t,XA,h_ref);
         num_evals = num_evals + 1;
         t_list = [t_list, t];
@@ -31,7 +31,8 @@ forward_euler_fixed_step_integration(rate_func_in,tspan,X0,h_ref)
         t = t+h_ref;
     end
     %calculate the final step
-    [XB, ~] = forward_euler_step(rate_func_in,t,X_list(end),(tspan(2)-t_list(end)));
+    final_step = tspan(2)-t_list(end);
+    [XB, ~] = forward_euler_step(rate_func_in,t,X_list(end),final_step);
     t_list = [t_list, t];
     X_list = [X_list, XB];
 end
