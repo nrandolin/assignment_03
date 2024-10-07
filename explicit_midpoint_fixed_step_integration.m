@@ -12,6 +12,7 @@
 %num_evals: total number of calls made to rate_func_in during the integration
 function [t_list,X_list,h_avg, num_evals] = ...
 explicit_midpoint_fixed_step_integration(rate_func_in,tspan,X0,h_ref)
+    % calculate steps and h
     [num_steps, h_avg] = iteration_solver(tspan, h_ref);
     % define variables
     XA = X0(2);
@@ -20,13 +21,13 @@ explicit_midpoint_fixed_step_integration(rate_func_in,tspan,X0,h_ref)
     t = tspan(1);
     X_list = [];
     %calculate the values until it is just short of the end value
-    for i = 1:num_steps
-        [XB, ~] = explicit_midpoint_step(rate_func_in,t,XA,h_avg);
-        num_evals = num_evals + 1;
+    for i = 1:num_steps+1
+        [XB, eval] = explicit_midpoint_step(rate_func_in,t,XA,h_avg);
+        num_evals = num_evals + eval;
         t_list = [t_list, t];
         X_list = [X_list, XB];
         XA = XB;
-        t = t+h_ref;
+        t = t+h_avg;
     end
 end
 
