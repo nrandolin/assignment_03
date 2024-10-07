@@ -5,6 +5,7 @@ h_list = linspace(10E-5,10,100);
 tspan = [0,t];
 X0 = [0; 1];
 local_error = [];
+difference = [];
 
 for i = 1:length(h_list)
    h_ref = h_list(i);
@@ -14,16 +15,21 @@ for i = 1:length(h_list)
    % calculate the real x value
    X_true = solution01(t+h_ref);
    local_error = [local_error, abs(X_numerical-X_true)];
+   difference = [difference, abs(solution01(t) - X_true)];
 end
 
 figure()
+% Log-log of local truncation error
 loglog(h_list, local_error)
 title("Local Truncation Error")
 xlabel("Step Size")
 ylabel("Error")
-
 [p,k] = loglog_fit(h_list,local_error);
-
+hold on
+% Difference Line
+loglog(h_list, difference, 'r')
+% WHAT IS THE FIT LINE??
+%plot(k*h_list^p, local_error, 'r')
 %% rate_func01
 function dXdt = rate_func01(t,X)
 dXdt = -5*X + 5*cos(t) - sin(t);
