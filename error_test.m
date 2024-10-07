@@ -29,7 +29,7 @@ hold on
 % Difference Line
 loglog(h_list, difference, 'r')
 % WHAT IS THE FIT LINE??
-%plot(k*h_list^p, local_error, 'r')
+loglog(h_list, k*h_list.^p, 'g')
 %% rate_func01
 function dXdt = rate_func01(t,X)
 dXdt = -5*X + 5*cos(t) - sin(t);
