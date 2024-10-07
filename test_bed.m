@@ -13,25 +13,19 @@ figure()
 plot(t, X_true)
 hold on
 plot(t_list_01, X_list_01)
-title("Forward Euler (h=0.01)")
-legend("True Solution", "Forward Euler")
+title("Forward Euler")
 xlabel("t")
 ylabel("X")
-hold off
 
 tspan = [0,5];
 X0 = [1; 0];
 h_ref = 0.1;
 
-[t_list_01,X_list_01,h_avg, num_evals] = forward_euler_fixed_step_integration(@rate_func01,tspan,X0,h_ref);
-figure()
-plot(t, X_true)
-hold on
-plot(t_list_01, X_list_01)
-title("Forward Euler (h=0.1)")
-legend("True Solution", "Forward Euler")
-xlabel("t")
-ylabel("X")
+[t_list_02,X_list_02,h_avg, num_evals] = forward_euler_fixed_step_integration(@rate_func01,tspan,X0,h_ref);
+plot(t_list_02, X_list_02)
+legend("True Solution", "h = 0.01", "h = 0.1")
+hold off
+
 
 %% test midpoint
 clear all
@@ -53,22 +47,19 @@ plot(t, X_true)
 hold on
 plot(t_list_01, X_list_01)
 title("Midpoint (h=0.01)")
-legend("True Solution", "Forward Euler")
 xlabel("t")
 ylabel("X")
-hold off
+
 
 tspan = [0,5];
 X0 = [1; 0];
 h_ref = 0.1;
 
-[t_list_01,X_list_01,h_avg, num_evals] = explicit_midpoint_fixed_step_integration(@rate_func01,tspan,X0,h_ref);
-figure()
-plot(t, X_true)
-hold on
-plot(t_list_01, X_list_01)
-title("Midpoint (h=0.1)")
-legend("True Solution", "Forward Euler")
+[t_list_02,X_list_02,h_avg, num_evals] = explicit_midpoint_fixed_step_integration(@rate_func01,tspan,X0,h_ref);
+
+plot(t_list_02, X_list_02)
+title("Midpoint")
+legend("True Solution", "h=0.01", "h=0.1")
 xlabel("t")
 ylabel("X")
 %% rate_func01
