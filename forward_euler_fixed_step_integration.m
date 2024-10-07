@@ -52,7 +52,7 @@ end
 %% iteration solver (find actual n and h)
 function [num_steps, h] = iteration_solver(tspan, h_ref)
     range = tspan(2)-tspan(1);
-    num_steps = range/h_ref;
-    num_steps = ceil(num_steps);
-    h = range/num_steps;
+    num_steps = range/h_ref;%The number of steps is the range devided by goal h 
+    num_steps = ceil(num_steps);%Round the number of steps up (to get a real number)
+    h = range/num_steps; % Divide range by steps to get real h
 end

@@ -13,21 +13,6 @@
 function [t_list,X_list,h_avg, num_evals] = ...
 explicit_midpoint_fixed_step_integration(rate_func_in,tspan,X0,h_ref)
     [num_steps, h_avg] = iteration_solver(tspan, h_ref);
-    % define variables
-    XA = X0(2);
-    num_evals = 0;
-    t_list = [];
-    t = tspan(1);
-    X_list = [];
-    %calculate the values until it is just short of the end value
-    for i = 1:num_steps
-        [XB, ~] = explicit_midpoint_step(rate_func_in,t,XA,h_avg);
-        num_evals = num_evals + 1;
-        t_list = [t_list, t];
-        X_list = [X_list, XB];
-        XA = XB;
-        t = t+h_ref;
-    end
 end
 
 %% Single Step
@@ -48,12 +33,4 @@ function [XB,num_evals] = explicit_midpoint_step(rate_func_in,t,XA,h)
     X_n_half = XA + h/2*rate_func_in(t, XA);
     XB = X_n_half + h*rate_func_in(t, X_n_half);
     num_evals = 2;
-end
-
-%% iteration solver (find actual n and h)
-function [num_steps, h] = iteration_solver(tspan, h_ref)
-    range = tspan(2)-tspan(1);
-    num_steps = range/h_ref;%The number of steps is the range devided by goal h 
-    num_steps = ceil(num_steps);%Round the number of steps up (to get a real number)
-    h = range/num_steps; % Divide range by steps to get real h
 end
