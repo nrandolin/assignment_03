@@ -51,8 +51,10 @@ end
 
 %% iteration solver (find actual n and h)
 function [num_steps, h] = iteration_solver(tspan, h_ref)
-    range = tspan(2)-tspan(1);
-    num_steps = range/h_ref;
-    num_steps = ceil(num_steps);
-    h = range/num_steps;
+    why_1 = tspan(2)-tspan(1);
+    why_2 = why_1/h_ref;
+    why_3 = ceil(why_2);
+    h = why_1/why_3;
+    num_steps = ceil(tspan(2)-tspan(1))/h_ref; % calculate total number of steps
+    h = (tspan(2)-tspan(1))/num_steps;
 end
