@@ -20,16 +20,49 @@ end
 
 figure()
 % Log-log of local truncation error
-loglog(h_list, local_error)
-title("Local Truncation Error")
+loglog(h_list, local_error, '.b', 'MarkerSize', 12)
+title("Local Truncation Error, Forward Euler")
 xlabel("Step Size")
 ylabel("Error")
 [p,k] = loglog_fit(h_list,local_error);
 hold on
 % Difference Line
-loglog(h_list, difference, 'r')
-% WHAT IS THE FIT LINE??
-loglog(h_list, k*h_list.^p, 'g')
+loglog(h_list, difference, '.r', 'MarkerSize', 12)
+% Fit Line
+loglog(h_list, k*h_list.^p, '--m', 'LineWidth', 1.5)
+legend("Local Truncation Error", "Difference", "Fit Line")
+%% LOCAL MIDPOINT
+t = 0.5;
+h_list = linspace(10E-5,10,100);
+tspan = [0,t];
+X0 = [0; 1];
+local_error = [];
+difference = [];
+
+for i = 1:length(h_list)
+   h_ref = h_list(i);
+   % Calculate numperical x value
+   [t_list,X_list,h_avg, num_evals] = explicit_midpoint_fixed_step_integration(@rate_func01,tspan,X0,h_ref);
+   X_numerical = X_list(end);
+   % calculate the real x value
+   X_true = solution01(t+h_ref);
+   local_error = [local_error, abs(X_numerical-X_true)];
+   difference = [difference, abs(solution01(t) - X_true)];
+end
+
+figure()
+% Log-log of local truncation error
+loglog(h_list, local_error, '.b', 'MarkerSize', 12)
+title("Local Truncation Error, Midpoint")
+xlabel("Step Size")
+ylabel("Error")
+[p,k] = loglog_fit(h_list,local_error);
+hold on
+% Difference Line
+loglog(h_list, difference, '.r', 'MarkerSize', 12)
+% Fit Line
+loglog(h_list, k*h_list.^p, '--m', 'LineWidth', 1.5)
+legend("Local Truncation Error", "Difference", "Fit Line")
 %% rate_func01
 function dXdt = rate_func01(t,X)
 dXdt = -5*X + 5*cos(t) - sin(t);
