@@ -1,4 +1,6 @@
 clear all
+filterparams.min_xval = 0;
+filterparams.max_xval = 1;
 
 %% GLOBAL FORWARD EULER
 
@@ -27,7 +29,7 @@ loglog(h_list, local_error, '.b', 'MarkerSize', 12)
 title("Local Truncation Error, Forward Euler")
 xlabel("Step Size")
 ylabel("Error")
-[p,k] = loglog_fit(h_list,local_error);
+[p,k] = loglog_fit(h_list,local_error, filterparams);
 hold on
 % Difference Line
 loglog(h_list, difference, '.r', 'MarkerSize', 12)
@@ -59,7 +61,7 @@ loglog(h_list, local_error, '.b', 'MarkerSize', 12)
 title("Local Truncation Error, Midpoint")
 xlabel("Step Size")
 ylabel("Error")
-[p,k] = loglog_fit(h_list,local_error);
+[p,k] = loglog_fit(h_list,local_error, filterparams);
 hold on
 % Difference Line
 loglog(h_list, difference, '.r', 'MarkerSize', 12)
