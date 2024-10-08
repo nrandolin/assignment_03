@@ -12,23 +12,22 @@
 %num_evals: A count of the number of times that you called
 % rate_func_in when computing the next step
 function [XB,num_evals] = backward_euler(rate_func_in,t,XA,h)
-    function [f_val] = euler(rate_func_in,XA, t, h)
-        f_val = @(XB) XA + h*rate_func_in(t+h, XB) - XB
-    end
-    XB = multi_newton_solver(euler, XA, true)
-    num_evals = 1;
+    func = @(XB) XA + h*rate_func_in(t+h, XB) - XB;
+    [XB, num_evals] = multi_newton_solver(func, XA, true);
 end
 
 %% MULTI NEWTON SOLVER
-function x_next = multi_newton_solver(fun,x_guess,varargin)
+function [x_next, num_evals] = multi_newton_solver(fun,x_guess,varargin)
 %true if supposed to use analytical jacobian, false otherwise
 use_analytical_jacobian = nargin==3 && varargin{1}(1);
 
 A_thresh = 10e-14;
 B_thresh = 10e-14;
+num_evals = 0;
 
     if use_analytical_jacobian == true
     f_val = fun(x_guess);
+    num_evals = 1;
     J = approximate_jacobian(fun,x_guess);
     x_next = x_guess;
         while max(abs(J\f_val))> A_thresh && max(abs(f_val))>B_thresh && abs(det(J*J')) > 1e-14
@@ -36,7 +35,8 @@ B_thresh = 10e-14;
             x_next = x_next - J\f_val;
             %establish next y value
             f_val = fun(x_next);
-            J = approximate_jacobian(fun,x_next);      
+            J = approximate_jacobian(fun,x_next);  
+            num_evals = num_evals+1;
         end
     end
 
