@@ -16,19 +16,20 @@ forward_euler_fixed_step_integration(rate_func_in,tspan,X0,h_ref)
     % calculate steps and h
     [num_steps, h_avg] = iteration_solver(tspan, h_ref);
     % define variables
-    XA = X0(2);
+    XA = X0;
     num_evals = 0;
-    t_list = [];
-    t = tspan(1);
-    X_list = [];
+    t_list = linspace(tspan(1),tspan(2),num_steps+1);
+ 
+    X_list = zeros(num_steps+1,length(X0));
+    X_list(1,:) = X0';
     %calculate the values until it is just short of the end value
-    for i = 1:num_steps+1
-        [XB, eval] = forward_euler_step(rate_func_in,t,XA,h_avg);
-        num_evals = num_evals + eval;
-        t_list = [t_list, t];
-        X_list = [X_list, XB];
+    for i = 1:num_steps
+        t = t_list(i);
+        [XB, temp_eval] = forward_euler_step(rate_func_in,t,XA,h_avg);
+        num_evals = num_evals + temp_eval;
+
+        X_list(i+1,:)= XB';
         XA = XB;
-        t = t+h_avg;
     end
 end
 %% X AT NEXT TIME STEP FORWARD EULER

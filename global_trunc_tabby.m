@@ -3,7 +3,7 @@
 t0 = 0;          % Start time
 tf = 0.5;        % End time (replace with the desired final time)
 tspan = [t0, tf];  % Full integration interval
-X0 = [0; 1];      % Initial conditions
+X0 = 1;      % Initial conditions
 
 h_list = logspace(-5,1,50);  % Time step sizes
 global_error_euler = [];
@@ -16,16 +16,17 @@ for i = 1:length(h_list)
    [t_list, X_list, h_avg, num_evals] = forward_euler_fixed_step_integration(@rate_func01, tspan, X0, h_ref);
 [t_list_mid, X_list_mid, h_avg_mid, num_evals_mid] = explicit_midpoint_fixed_step_integration(@rate_func01, tspan, X0, h_ref);
   
-X_numerical = X_list(end); 
-X_numerical_mid = X_list_mid(end); 
-   X_true = [X_true, solution01(tf)];  
+    X_numerical = X_list(end,:)'; 
+    X_analytical = solution01(tf)
+    X_numerical_mid = X_list_mid(end,:)'; 
+   X_true = [X_true, X_analytical];  
 
-   global_error_euler = [global_error_euler, norm(X_numerical - X_true(end))];
-   global_error_mid = [global_error_mid, norm(X_numerical_mid - X_true(end))];
+   global_error_euler = [global_error_euler, norm(X_numerical - X_analytical)];
+   global_error_mid = [global_error_mid, norm(X_numerical_mid - X_analytical)];
    rate_function_calls = [rate_function_calls, num_evals];
 end
 
-[p,k] = loglog_fit(h_list,global_error)
+[p,k] = loglog_fit(h_list,global_error_euler)
 
 % Plotting Global Truncation Error vs Step Size
 figure;
@@ -35,6 +36,7 @@ ylabel('Global Truncation Error');
 title('Global Truncation Error vs Step Size');
 grid on; hold on;
 loglog(h_list, global_error_mid, 'o-', 'Color','r');
+legend("Euler","Midpoint")
 
 
 hold off;
@@ -46,7 +48,7 @@ ylabel('Global Truncation Error');
 title('Global Error vs Number of Rate Function Calls Forward Euler Algorithm');
 grid on;hold on;
 loglog(rate_function_calls, global_error_mid, 'o-', 'Color','r');
-legend()
+legend("Euler","Midpoint")
 
 %% rate_func01
 function dXdt = rate_func01(t,X)
