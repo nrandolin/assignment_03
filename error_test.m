@@ -1,5 +1,8 @@
 clear all
 
+%% GLOBAL FORWARD EULER
+
+%% LOCAL FORWARD EULER
 t = 0.5;
 h_list = linspace(10E-5,10,100);
 tspan = [0,t];
