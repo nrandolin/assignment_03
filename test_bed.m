@@ -5,6 +5,7 @@ tspan = [0,t];
 X0 = [0; 1];
 local_error = [];
 difference = [];
+rate_function_calls = [];
 
 for i = 1:length(h_list)
    h_ref = h_list(i);
@@ -15,8 +16,24 @@ for i = 1:length(h_list)
    X_true = solution01(t+h_ref);
    local_error = [local_error, abs(X_numerical-X_true)];
    difference = [difference, abs(solution01(t) - X_true)];
+   rate_function_calls = [rate_function_calls, num_evals];
 end
 [p,k] = loglog_fit(h_list,local_error)
+
+
+%% Local Plots
+
+% Plotting Local Truncation Error vs Step Size
+figure;
+loglog(h_list, difference, 'o-'); hold on;
+xlabel('Step size (h)');
+ylabel('Global Truncation Error');
+title('Global Truncation Error vs Step Size');
+grid on;
+
+
+
+
 %% Test iteration solver
 tspan = [0,4.9];
 h_ref = 0.2;
