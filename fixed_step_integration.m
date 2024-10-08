@@ -13,7 +13,7 @@
 %h_avg: the average step size
 %num_evals: total number of calls made to rate_func_in during the integration
 function [t_list,X_list,h_avg, num_evals] = ...
-fixed_step_integration(rate_func_in,step_func,tspan,X0,h_ref)
+fixed_step_integration_old(rate_func_in,step_func,tspan,X0,h_ref)
     % calculate steps and h
     [num_steps, h_avg] = iteration_solver(tspan, h_ref);
     % define variables
@@ -60,6 +60,31 @@ fixed_step_integration(rate_func_in,step_func,tspan,X0,h_ref)
         end
      end
 end
+%% Testing
+function [t_list,X_list,h_avg, num_evals] = ...
+fixed_step_integration(rate_func_in,step_func,tspan,X0,h_ref)
+    % calculate steps and h
+    [num_steps, h_avg] = iteration_solver(tspan, h_ref);
+    % define variables
+    XA = X0;
+    num_evals = 0;
+    t_list = linspace(tspan(1),tspan(2),num_steps+1);
+ 
+    X_list = zeros(num_steps+1,length(X0));
+    X_list(1,:) = X0';
+
+
+    for i = 1:num_steps
+        t = t_list(i);
+        [XB, temp_eval] = step_func(rate_func_in,t,XA,h_avg);
+        num_evals = num_evals + temp_eval;
+
+        X_list(i+1,:)= XB';
+        XA = XB;
+    end
+end
+
+
 %% Single Step midpoint
 %This function computes the value of X at the next time step
 %using the explicit midpoint approximation
