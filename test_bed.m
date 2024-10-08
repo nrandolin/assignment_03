@@ -1,3 +1,8 @@
+%% testing
+XA = 1
+[XB,num_evals] = backward_euler(@rate_func01,0.5,XA,0.01)
+
+
 %% test local h/p val
 t = 0.5;
 h_list = linspace(10E-5,10,50);
