@@ -17,51 +17,37 @@ h_ref = 0.38;
 
 figure()
 [t_list1,X_list1,h_avg, num_evals] = fixed_step_integration(@rate_func01,@explicit_midpoint_step,tspan,X0,h_ref)
-num_sol = plot(t_list1, X_list1, 'b', 'LineWidth', 1.5, 'DisplayName', 'Numerical Solution')
+plot(t_list1, X_list1)
 title("Explicit Midpoint Numerical Solution")
 xlabel("Time")
 ylabel("X")
 hold on
-X_true = solution01(t_list1);
-true_sol = plot(t_list1, X_true, '--r', 'LineWidth', 1.5, 'DisplayName', 'True Solution')
-legend([num_sol(1), true_sol(1)], 'Numerical Solution', 'True Solution')
+plot(t_list1, X_num)
 
 
 hold off
 figure()
 [t_list2,X_list2,h_avg, num_evals] = fixed_step_integration(@rate_func01,@forward_euler_step,tspan,X0,h_ref)
-num_sol = plot(t_list2, X_list2, 'b', 'LineWidth', 1.5, 'DisplayName', 'Numerical Solution')
+plot(t_list2, X_list2)
 title("Forward Euler Numerical Solution")
 xlabel("Time")
 ylabel("X")
-hold on
-X_true = solution01(t_list2);
-true_sol = plot(t_list2, X_true, '--r', 'LineWidth', 1.5, 'DisplayName', 'True Solution')
-legend([num_sol(1), true_sol(1)], 'Numerical Solution', 'True Solution')
 
 hold off
 figure()
 [t_list3,X_list3,h_avg, num_evals] = fixed_step_integration(@rate_func01,@implicit_midpoint_step,tspan,X0,h_ref)
-num_sol = plot(t_list3, X_list3, 'b', 'LineWidth', 1.5, 'DisplayName', 'Numerical Solution')
+plot(t_list3, X_list3)
 title("Implicit Midpoint Numerical Solution")
 xlabel("Time")
 ylabel("X")
-hold on
-X_true = solution01(t_list3);
-true_sol = plot(t_list3, X_true, '--r', 'LineWidth', 1.5, 'DisplayName', 'True Solution')
-legend([num_sol(1), true_sol(1)], 'Numerical Solution', 'True Solution')
 
 hold off
 figure()
 [t_list4,X_list4,h_avg, num_evals] = fixed_step_integration(@rate_func01,@backward_euler,tspan,X0,h_ref)
-num_sol = plot(t_list4, X_list4, 'b', 'LineWidth', 1.5, 'DisplayName', 'Numerical Solution')
+plot(t_list4, X_list4)
 title("Backward Euler Numerical Solution")
 xlabel("Time")
 ylabel("X")
-hold on
-X_true = solution01(t_list4);
-true_sol = plot(t_list4, X_true, '--r', 'LineWidth', 1.5, 'DisplayName', 'True Solution')
-legend([num_sol(1), true_sol(1)], 'Numerical Solution', 'True Solution')
 %% GLOBAL
 t = 0.5;
 h_list = linspace(10E-5,10,100);

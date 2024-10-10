@@ -70,8 +70,8 @@ fixed_step_integration(rate_func_in,step_func,tspan,X0,h_ref)
     num_evals = 0;
     t_list = linspace(tspan(1),tspan(2),num_steps+1);
  
-    X_list = zeros(num_steps+1,length(X0));
-    X_list(1,:) = X0';
+    X_list = zeros(num_steps+1)
+    X_list(1,:) = X0(1)
 
 
     for i = 1:num_steps
@@ -79,7 +79,7 @@ fixed_step_integration(rate_func_in,step_func,tspan,X0,h_ref)
         [XB, temp_eval] = step_func(rate_func_in,t,XA,h_avg);
         num_evals = num_evals + temp_eval;
 
-        X_list(i+1,:)= XB';
+        X_list(i+1,:)= XB(1);
         XA = XB;
     end
 end

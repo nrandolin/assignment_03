@@ -38,7 +38,7 @@ loglog(h_list, k*h_list.^p, '--m', 'LineWidth', 1.5)
 legend("Local Truncation Error", "Difference", "Fit Line")
 %% LOCAL MIDPOINT
 t = 0.5;
-h_list = linspace(10E-5,10,100);
+h_list = linspace(10E-5,10,50);
 tspan = [0,t];
 X0 = [0; 1];
 local_error = [];
@@ -61,7 +61,7 @@ loglog(h_list, local_error, '.b', 'MarkerSize', 12)
 title("Local Truncation Error, Midpoint")
 xlabel("Step Size")
 ylabel("Error")
-[p,k] = loglog_fit(h_list,local_error, filterparams);
+[p,k] = loglog_fit(h_list,local_error, filterparams)
 hold on
 % Difference Line
 loglog(h_list, difference, '.r', 'MarkerSize', 12)
