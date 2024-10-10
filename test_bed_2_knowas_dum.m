@@ -15,20 +15,7 @@ h_ref = 0.38;
 % [XB,num_evals] = implicit_midpoint_step(@rate_func01,t,XA,h);
 % [XB,num_evals] = backward_euler(@rate_func01,t,XA,h);
 
-figure()
-[t_list1,X_list1,h_avg, num_evals] = fixed_step_integration(@rate_func01,@explicit_midpoint_step,tspan,X0,h_ref)
-num_sol = plot(t_list1, X_list1, 'b', 'LineWidth', 1.5, 'DisplayName', 'Numerical Solution')
-title("Explicit Midpoint Numerical Solution")
-xlabel("Time")
-ylabel("X")
-hold on
-X_true = solution01(t_list1);
-true_sol = plot(t_list1, X_true, '--r', 'LineWidth', 1.5, 'DisplayName', 'True Solution')
-legend([num_sol(1), true_sol(1)], 'Numerical Solution', 'True Solution')
-
-
-hold off
-figure()
+subplot(4,1,1);
 [t_list2,X_list2,h_avg, num_evals] = fixed_step_integration(@rate_func01,@forward_euler_step,tspan,X0,h_ref)
 num_sol = plot(t_list2, X_list2, 'b', 'LineWidth', 1.5, 'DisplayName', 'Numerical Solution')
 title("Forward Euler Numerical Solution")
@@ -39,8 +26,18 @@ X_true = solution01(t_list2);
 true_sol = plot(t_list2, X_true, '--r', 'LineWidth', 1.5, 'DisplayName', 'True Solution')
 legend([num_sol(1), true_sol(1)], 'Numerical Solution', 'True Solution')
 
-hold off
-figure()
+subplot(4,1,2);
+[t_list1,X_list1,h_avg, num_evals] = fixed_step_integration(@rate_func01,@explicit_midpoint_step,tspan,X0,h_ref)
+num_sol = plot(t_list1, X_list1, 'b', 'LineWidth', 1.5, 'DisplayName', 'Numerical Solution')
+title("Explicit Midpoint Numerical Solution")
+xlabel("Time")
+ylabel("X")
+hold on
+X_true = solution01(t_list1);
+true_sol = plot(t_list1, X_true, '--r', 'LineWidth', 1.5, 'DisplayName', 'True Solution')
+legend([num_sol(1), true_sol(1)], 'Numerical Solution', 'True Solution')
+
+subplot(4,1,3);
 [t_list3,X_list3,h_avg, num_evals] = fixed_step_integration(@rate_func01,@implicit_midpoint_step,tspan,X0,h_ref)
 num_sol = plot(t_list3, X_list3, 'b', 'LineWidth', 1.5, 'DisplayName', 'Numerical Solution')
 title("Implicit Midpoint Numerical Solution")
@@ -51,8 +48,7 @@ X_true = solution01(t_list3);
 true_sol = plot(t_list3, X_true, '--r', 'LineWidth', 1.5, 'DisplayName', 'True Solution')
 legend([num_sol(1), true_sol(1)], 'Numerical Solution', 'True Solution')
 
-hold off
-figure()
+subplot(4,1,4);
 [t_list4,X_list4,h_avg, num_evals] = fixed_step_integration(@rate_func01,@backward_euler,tspan,X0,h_ref)
 num_sol = plot(t_list4, X_list4, 'b', 'LineWidth', 1.5, 'DisplayName', 'Numerical Solution')
 title("Backward Euler Numerical Solution")
