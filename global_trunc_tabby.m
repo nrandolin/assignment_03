@@ -1,4 +1,5 @@
-
+filterparams.min_xval = 50;
+filterparams.max_xval = 1000;
 
 %% Test Global h/p val
 t0 = 0;          % Start time
@@ -6,7 +7,7 @@ tf = 0.5;        % End time (replace with the desired final time)
 tspan = [t0, tf];  % Full integration interval
 X0 = 1;      
 
-h_list = logspace(-5,1,10000);  % Time step sizes
+h_list = logspace(-5,1,100);  % Time step sizes
 global_error_euler = [];
 global_error_mid = [];
 rate_function_calls_mid = [];
@@ -32,11 +33,11 @@ for i = 1:length(h_list)
 
 end
 
-[p_euler,k_euler] = loglog_fit(rate_function_calls_euler,global_error_euler);
-[p_mid,k_mid] = loglog_fit(rate_function_calls_mid,global_error_mid);
+[p_euler,k_euler] = loglog_fit(rate_function_calls_euler,global_error_euler, filterparams);
+[p_mid,k_mid] = loglog_fit(rate_function_calls_mid,global_error_mid, filterparams);
 
-[p_euler_step,k_euler_step] = loglog_fit(h_list,global_error_euler);
-[p_mid_step,k_mid_step] = loglog_fit(h_list,global_error_mid);
+[p_euler_step,k_euler_step] = loglog_fit(h_list,global_error_euler, filterparams);
+[p_mid_step,k_mid_step] = loglog_fit(h_list,global_error_mid, filterparams);
 
     figure;
 
