@@ -59,9 +59,9 @@ X_true = solution01(t_list4);
 true_sol = plot(t_list4, X_true, '--r', 'LineWidth', 1.5, 'DisplayName', 'True Solution')
 legend([num_sol(1), true_sol(1)], 'Numerical Solution', 'True Solution')
 %% GLOBAL
-t = 0.5;
+t = 0.3;
 %h_list = linspace(10E-5,10,100);
-h_list = logspace(-3,1,50);
+h_list = logspace(-4,1,50);
 tspan = [0,t];
 X0 = [0; 1];
 % glob_error_euler = [];
