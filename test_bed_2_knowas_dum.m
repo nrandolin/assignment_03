@@ -1,7 +1,103 @@
 %%
 clear all
-filterparams.min_xval = 0;
-filterparams.max_xval = 0.1;
+filterparams.min_xval = 100;
+filterparams.max_xval = 1000;
+
+%% LOCAL IMPLICIT
+t0 = 0;          % Start time
+tf = 0.5;        % End time (replace with the desired final time)
+tspan = [t0, tf];  % Full integration interval
+X0 = 1;      % Initial conditions
+
+h_list = logspace(-5,1,50);  % Time step sizes
+local_error_backward = [];
+local_error_imp_mid = [];
+rate_function_calls = [];
+X_true = [];
+
+t_ref = 4.49;
+XA = solution01(t_ref);
+
+for i = 1:length(h_list)
+    h_ref = h_list(i);
+
+    [XB_backward,~] = backward_euler(@rate_func01,t_ref,XA,h_ref);
+    [XB_imp_mid,~] = implicit_midpoint_step(@rate_func01,t_ref,XA,h_ref);
+
+    X_analytical = solution01(t_ref+h_ref);
+    
+    X_true = [X_true, X_analytical];  
+
+   local_error_backward = [local_error_backward, norm(XB_backward - X_analytical)];
+   local_error_imp_mid = [local_error_imp_mid, norm(XB_imp_mid - X_analytical)];
+   
+end
+[p_backward,k_backward] = loglog_fit(h_list,local_error_backward, filterparams)
+[p_imp_mid,k_imp_mid] = loglog_fit(h_list,local_error_imp_mid, filterparams)
+
+figure()
+% Log-log of local truncation error
+loglog(h_list, local_error_backward, 'g', 'MarkerSize', 10)
+hold on
+loglog(h_list, local_error_imp_mid, 'm', 'MarkerSize', 10)
+loglog(h_list, k_backward*h_list.^p_backward, 'r--', 'LineWidth', 1.5, 'DisplayName', 'Difference Fit Line');
+loglog(h_list, k_imp_mid*h_list.^p_imp_mid, 'r--', 'LineWidth', 1.5, 'DisplayName', 'Difference Fit Line');
+title("Local Truncation Error, All Methods")
+xlabel("Step Size")
+ylabel("Error")
+
+%% GLOBAL IMPLICIT
+t = 0.3;
+h_list = logspace(-4,1,50);
+tspan = [0,t];
+X0 = [0; 1];
+glob_error_backward = zeros(1, length(h_list));
+glob_error_imp_mid = zeros(1, length(h_list));
+rate_function_calls_backward = [];
+rate_function_calls_imp_mid = [];
+
+for i = 1:length(h_list)
+   h_ref = h_list(i);
+   % Calculate numperical x value
+   [t_list3,X_list3,~, num_evals] = fixed_step_integration(@rate_func01,@backward_euler,tspan,X0,h_ref);
+   [t_list4,X_list4,~, num_evals_mid] = fixed_step_integration(@rate_func01,@implicit_midpoint_step,tspan,X0,h_ref);
+
+   X_numerical3 = X_list3(end);
+   X_numerical4 = X_list4(end);
+   % calculate the real x value
+   X_true = solution01(t+h_ref);
+
+   glob_error_backward(i) = abs(X_numerical3-X_true);
+   glob_error_imp_mid(i) = abs(X_numerical4-X_true);
+   rate_function_calls_backward = [rate_function_calls_backward, num_evals];
+   rate_function_calls_imp_mid = [rate_function_calls_imp_mid, num_evals_mid];
+
+end
+
+[p_g_backward,k_g_backward] = loglog_fit(h_list,glob_error_backward, filterparams)
+[p_g_imp_mid,k_g_imp_mid] = loglog_fit(h_list,glob_error_imp_mid, filterparams)
+
+[p_backward_call,k_backward_call] = loglog_fit(rate_function_calls_backward,glob_error_backward, filterparams);
+[p_imp_mid_call,k_imp_mid_call] = loglog_fit(rate_function_calls_imp_mid,glob_error_imp_mid, filterparams);
+
+figure()
+% Log-log of local truncation error
+loglog(h_list, glob_error_backward, 'g', 'MarkerSize', 10)
+hold on
+loglog(h_list, glob_error_imp_mid, 'm', 'MarkerSize', 10)
+loglog(h_list, k_g_backward*h_list.^p_g_backward, 'r--', 'LineWidth', 1.5, 'DisplayName', 'Difference Fit Line');
+loglog(h_list, k_g_imp_mid*h_list.^p_g_imp_mid, 'r--', 'LineWidth', 1.5, 'DisplayName', 'Difference Fit Line');
+
+title("Global Truncation Error, All Methods")
+xlabel("Step Size")
+ylabel("Error")
+hold off
+figure()
+loglog(rate_function_calls_backward, glob_error_backward, 'b', 'LineWidth', 1.5); hold on;
+loglog(rate_function_calls_imp_mid, glob_error_imp_mid,'g', 'LineWidth', 1.5, 'DisplayName', 'Midpoint Error');
+loglog(rate_function_calls_backward, k_backward_call*rate_function_calls_backward.^p_backward_call, 'r--', 'LineWidth', 1.5);
+loglog(rate_function_calls_imp_mid, k_imp_mid_call*rate_function_calls_imp_mid.^p_imp_mid_call, 'r--', 'LineWidth', 1.5, 'DisplayName', 'Midpoint Fit Line');
+%legend("Forward Euler", "Explicit Midpoint", "Backward Euler", "Implicit Midpoint")
 
 %%
 clear all

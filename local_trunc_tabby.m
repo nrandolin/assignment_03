@@ -1,4 +1,5 @@
-
+filterparams.min_xval = 0;
+filterparams.max_xval = 0.1;
 function local_trunc_tabby()
 
     %% LOCAL FORWARD EULER
@@ -40,7 +41,6 @@ h_list = logspace(-5,1,100);
 
     % Euler local error data points and fit line
     loglog(h_list, local_error_euler, 'b', 'LineWidth', 1.5); hold on;
-    grid on;
     xlabel('Step size (h)');
     ylabel('Local Truncation Error');
 
