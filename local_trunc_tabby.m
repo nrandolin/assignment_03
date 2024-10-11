@@ -1,17 +1,14 @@
+
 function local_trunc_tabby()
 
     %% LOCAL FORWARD EULER
-    
-    t0 = 0;          % Start time
-    tf = 0.5;        % End time (replace with the desired final time)
-    tspan = [t0, tf];  % Full integration interval
-    X0 = 1;      % Initial conditions
-    
-    h_list = logspace(-5,1,50);  % Time step sizes
+  
+h_list = logspace(-5,1,100); 
+
     local_error_euler = [];
     local_error_mid = [];
-    rate_function_calls = [];
     X_true = [];
+    difference = [];
 
     t_ref = 4.49;
     XA = solution01(t_ref);
@@ -24,27 +21,40 @@ function local_trunc_tabby()
  
         X_analytical = solution01(t_ref+h_ref);
         
-       X_true = [X_true, X_analytical];  
-    
+       X_true = [X_true, X_analytical];
        local_error_euler = [local_error_euler, norm(XB_euler - X_analytical)];
        local_error_mid = [local_error_mid, norm(XB_mid - X_analytical)];
-       
+       difference = [difference, norm(X_analytical-solution01(t_ref))];
+
     end
+
     
     [p_euler,k_euler] = loglog_fit(h_list,local_error_euler)
     [p_mid,k_mid] = loglog_fit(h_list,local_error_mid)
+    [p_diff,k_diff] = loglog_fit(h_list,difference)
+
     %%%%%
     
-    % Plotting Global Truncation Error vs Step Size
-    figure;
-    loglog(h_list, local_error_euler, 'o-'); hold on;
+    % Plotting Local Truncation Error vs Step Size
+    figure; 
+
+    % Euler local error data points and fit line
+    loglog(h_list, local_error_euler, 'b', 'LineWidth', 1.5); hold on;
+    grid on;
     xlabel('Step size (h)');
-    ylabel('Global Truncation Error');
-    title('Global Truncation Error vs Step Size');
-    grid on; hold on;
-    loglog(h_list, local_error_mid, 'o-', 'Color','r');
-    legend("Euler","Midpoint")
+    ylabel('Local Truncation Error');
+
+    title('Local Truncation Error vs Step Size');
+    loglog(h_list, local_error_mid,'g', 'LineWidth', 1.5, 'DisplayName', 'Midpoint Error');
+
+
+    loglog(h_list, difference, 'c', 'LineWidth', 1.5, 'DisplayName', 'Difference');
     
+    loglog(h_list, k_diff*h_list.^p_diff, 'r--', 'LineWidth', 1.5, 'DisplayName', 'Difference Fit Line');
+    loglog(h_list, k_euler*h_list.^p_euler, 'r--', 'LineWidth', 1.5);
+        loglog(h_list, k_mid*h_list.^p_mid, 'r--', 'LineWidth', 1.5, 'DisplayName', 'Midpoint Fit Line');
+
+    legend("Euler","Midpoint", "Difference", "Fit Line")
     hold off;
     
     
