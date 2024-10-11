@@ -15,58 +15,73 @@ h_ref = 0.38;
 % [XB,num_evals] = implicit_midpoint_step(@rate_func01,t,XA,h);
 % [XB,num_evals] = backward_euler(@rate_func01,t,XA,h);
 
-figure()
+subplot(4,1,1);
+[t_list2,X_list2,h_avg, num_evals] = fixed_step_integration(@rate_func01,@forward_euler_step,tspan,X0,h_ref)
+disp("lily")
+num_sol = plot(t_list2, X_list2, 'b', 'LineWidth', 1.5, 'DisplayName', 'Numerical Solution')
+title("Forward Euler Numerical Solution")
+xlabel("Time")
+ylabel("X")
+hold on
+X_true = solution01(t_list2);
+true_sol = plot(t_list2, X_true, '--r', 'LineWidth', 1.5, 'DisplayName', 'True Solution')
+legend([num_sol(1), true_sol(1)], 'Numerical Solution', 'True Solution')
+
+subplot(4,1,2);
 [t_list1,X_list1,h_avg, num_evals] = fixed_step_integration(@rate_func01,@explicit_midpoint_step,tspan,X0,h_ref)
-plot(t_list1, X_list1)
+num_sol = plot(t_list1, X_list1, 'b', 'LineWidth', 1.5, 'DisplayName', 'Numerical Solution')
 title("Explicit Midpoint Numerical Solution")
 xlabel("Time")
 ylabel("X")
 hold on
-plot(t_list1, X_num)
+X_true = solution01(t_list1);
+true_sol = plot(t_list1, X_true, '--r', 'LineWidth', 1.5, 'DisplayName', 'True Solution')
+legend([num_sol(1), true_sol(1)], 'Numerical Solution', 'True Solution')
 
-
-hold off
-figure()
-[t_list2,X_list2,h_avg, num_evals] = fixed_step_integration(@rate_func01,@forward_euler_step,tspan,X0,h_ref)
-plot(t_list2, X_list2)
-title("Forward Euler Numerical Solution")
-xlabel("Time")
-ylabel("X")
-
-hold off
-figure()
+subplot(4,1,3);
 [t_list3,X_list3,h_avg, num_evals] = fixed_step_integration(@rate_func01,@implicit_midpoint_step,tspan,X0,h_ref)
-plot(t_list3, X_list3)
+num_sol = plot(t_list3, X_list3, 'b', 'LineWidth', 1.5, 'DisplayName', 'Numerical Solution')
 title("Implicit Midpoint Numerical Solution")
 xlabel("Time")
 ylabel("X")
+hold on
+X_true = solution01(t_list3);
+true_sol = plot(t_list3, X_true, '--r', 'LineWidth', 1.5, 'DisplayName', 'True Solution')
+legend([num_sol(1), true_sol(1)], 'Numerical Solution', 'True Solution')
 
-hold off
-figure()
+subplot(4,1,4);
 [t_list4,X_list4,h_avg, num_evals] = fixed_step_integration(@rate_func01,@backward_euler,tspan,X0,h_ref)
-plot(t_list4, X_list4)
+num_sol = plot(t_list4, X_list4, 'b', 'LineWidth', 1.5, 'DisplayName', 'Numerical Solution')
 title("Backward Euler Numerical Solution")
 xlabel("Time")
 ylabel("X")
+hold on
+X_true = solution01(t_list4);
+true_sol = plot(t_list4, X_true, '--r', 'LineWidth', 1.5, 'DisplayName', 'True Solution')
+legend([num_sol(1), true_sol(1)], 'Numerical Solution', 'True Solution')
 %% GLOBAL
 t = 0.5;
-h_list = linspace(10E-5,10,100);
-h_list = logspace(-5,1,50);
+%h_list = linspace(10E-5,10,100);
+h_list = logspace(-3,1,50);
 tspan = [0,t];
 X0 = [0; 1];
-glob_error_euler = [];
-glob_error_mid = [];
-glob_error_backward = [];
-glob_error_imp_mid = [];
+% glob_error_euler = [];
+% glob_error_mid = [];
+% glob_error_backward = [];
+% glob_error_imp_mid = [];
+glob_error_euler = zeros(1, length(h_list));
+glob_error_mid = zeros(1, length(h_list));
+glob_error_backward = zeros(1, length(h_list));
+glob_error_imp_mid = zeros(1, length(h_list));
 difference = [];
 
 for i = 1:length(h_list)
    h_ref = h_list(i);
    % Calculate numperical x value
-   [t_list1,X_list1,h_avg1, num_evals1] = fixed_step_integration(@rate_func01,@forward_euler_step,tspan,X0,h_ref);
-   [t_list2,X_list2,h_avg2, num_evals2] = fixed_step_integration(@rate_func01,@explicit_midpoint_step,tspan,X0,h_ref);
-   [t_list3,X_list3,h_avg3, num_evals3] = fixed_step_integration(@rate_func01,@backward_euler,tspan,X0,h_ref);
-   [t_list4,X_list4,h_avg4, num_evals4] = fixed_step_integration(@rate_func01,@implicit_midpoint_step,tspan,X0,h_ref);
+   [t_list1,X_list1,~, ~] = fixed_step_integration(@rate_func01,@forward_euler_step,tspan,X0,h_ref);
+   [t_list2,X_list2,~, ~] = fixed_step_integration(@rate_func01,@explicit_midpoint_step,tspan,X0,h_ref);
+   [t_list3,X_list3,~, ~] = fixed_step_integration(@rate_func01,@backward_euler,tspan,X0,h_ref);
+   [t_list4,X_list4,~, ~] = fixed_step_integration(@rate_func01,@implicit_midpoint_step,tspan,X0,h_ref);
 
    X_numerical1 = X_list1(end);
    X_numerical2 = X_list2(end);
@@ -75,12 +90,18 @@ for i = 1:length(h_list)
    % calculate the real x value
    X_true = solution01(t+h_ref);
 
-   glob_error_euler = [glob_error_euler, abs(X_numerical1-X_true)];
-   glob_error_mid = [glob_error_mid, abs(X_numerical2-X_true)];
-   glob_error_backward = [glob_error_backward, abs(X_numerical3-X_true)];
-   glob_error_imp_mid = [glob_error_imp_mid, abs(X_numerical4-X_true)];
+%    glob_error_euler = [glob_error_euler, abs(X_numerical1-X_true)];
+%    glob_error_mid = [glob_error_mid, abs(X_numerical2-X_true)];
+%    glob_error_backward = [glob_error_backward, abs(X_numerical3-X_true)];
+%    glob_error_imp_mid = [glob_error_imp_mid, abs(X_numerical4-X_true)];
+   glob_error_euler(i) = abs(X_numerical1-X_true);
+   glob_error_mid(i) = abs(X_numerical2-X_true);
+   glob_error_backward(i) = abs(X_numerical3-X_true);
+   glob_error_imp_mid(i) = abs(X_numerical4-X_true);
+
 end
-[p_g_euler,k_g_euler] = loglog_fit(h_list,local_error_euler, filterparams)
+
+[p_g_euler,k_g_euler] = loglog_fit(h_list,local=_error_euler, filterparams)
 [p_g_mid,k_g_mid] = loglog_fit(h_list,local_error_mid, filterparams)
 [p_g_backward,k_g_backward] = loglog_fit(h_list,local_error_backward, filterparams)
 [p_g_imp_mid,k_g_imp_mid] = loglog_fit(h_list,local_error_imp_mid, filterparams)
