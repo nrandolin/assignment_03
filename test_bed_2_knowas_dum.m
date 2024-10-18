@@ -168,15 +168,19 @@ glob_error_euler = zeros(1, length(h_list));
 glob_error_mid = zeros(1, length(h_list));
 glob_error_backward = zeros(1, length(h_list));
 glob_error_imp_mid = zeros(1, length(h_list));
+rate_function_calls_mid = [];
+rate_function_calls_euler = [];
+rate_function_calls_back = [];
+rate_function_calls_imp = [];
 difference = [];
 
 for i = 1:length(h_list)
    h_ref = h_list(i);
    % Calculate numperical x value
-   [t_list1,X_list1,~, ~] = fixed_step_integration(@rate_func01,@forward_euler_step,tspan,X0,h_ref);
-   [t_list2,X_list2,~, ~] = fixed_step_integration(@rate_func01,@explicit_midpoint_step,tspan,X0,h_ref);
-   [t_list3,X_list3,~, ~] = fixed_step_integration(@rate_func01,@backward_euler,tspan,X0,h_ref);
-   [t_list4,X_list4,~, ~] = fixed_step_integration(@rate_func01,@implicit_midpoint_step,tspan,X0,h_ref);
+   [t_list1,X_list1,~, num_evals1] = fixed_step_integration(@rate_func01,@forward_euler_step,tspan,X0,h_ref);
+   [t_list2,X_list2,~, num_evals2] = fixed_step_integration(@rate_func01,@explicit_midpoint_step,tspan,X0,h_ref);
+   [t_list3,X_list3,~, num_evals3] = fixed_step_integration(@rate_func01,@backward_euler,tspan,X0,h_ref);
+   [t_list4,X_list4,~, num_evals4] = fixed_step_integration(@rate_func01,@implicit_midpoint_step,tspan,X0,h_ref);
 
    X_numerical1 = X_list1(end);
    X_numerical2 = X_list2(end);
@@ -194,12 +198,32 @@ for i = 1:length(h_list)
    glob_error_backward(i) = abs(X_numerical3-X_true);
    glob_error_imp_mid(i) = abs(X_numerical4-X_true);
 
+   rate_function_calls_mid = [rate_function_calls_mid, num_evals2];
+   rate_function_calls_euler = [rate_function_calls_euler, num_evals1];
+   rate_function_calls_back = [rate_function_calls_back, num_evals3];
+   rate_function_calls_imp = [rate_function_calls_imp, num_evals4];
+
 end
 
 [p_g_euler,k_g_euler] = loglog_fit(h_list,glob_error_euler, filterparams)
 [p_g_mid,k_g_mid] = loglog_fit(h_list,glob_error_mid, filterparams)
 [p_g_backward,k_g_backward] = loglog_fit(h_list,glob_error_backward, filterparams)
 [p_g_imp_mid,k_g_imp_mid] = loglog_fit(h_list,glob_error_imp_mid, filterparams)
+
+% [p_euler,k_euler] = loglog_fit(rate_function_calls_euler,global_error_euler, filterparams);
+% [p_mid,k_mid] = loglog_fit(rate_function_calls_mid,global_error_mid, filterparams);
+% [p_back,k_back] = loglog_fit(rate_function_calls_euler,global_error_euler, filterparams);
+% [p_imp,k_imp] = loglog_fit(rate_function_calls_imp,glob_error_imp_mid, filterparams);
+
+figure()
+loglog(rate_function_calls_euler, glob_error_euler, '.b', 'MarkerSize', 10); hold on;
+loglog(rate_function_calls_mid, glob_error_mid, '.r', 'MarkerSize', 10); hold on;
+loglog(rate_function_calls_back, glob_error_backward, '.g', 'MarkerSize', 10); hold on;
+loglog(rate_function_calls_imp, glob_error_imp_mid, '.m', 'MarkerSize', 10); hold off;
+title("Global Truncation Error vs. Rate of Function Calls, All Methods")
+xlabel("Rate of Function Calls")
+ylabel("Error")
+legend("Forward Euler", "Explicit Midpoint", "Backward Euler", "Implicit Midpoint")
 
 figure()
 % Log-log of local truncation error

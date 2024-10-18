@@ -1,5 +1,5 @@
-filterparams.min_xval = 50;
-filterparams.max_xval = 1000;
+filterparams.min_xval = 0;
+filterparams.max_xval = 0.1;
 
 %% Test Global h/p val
 t0 = 0;          % Start time
@@ -7,7 +7,7 @@ tf = 0.5;        % End time (replace with the desired final time)
 tspan = [t0, tf];  % Full integration interval
 X0 = 1;      
 
-h_list = logspace(-5,1,100);  % Time step sizes
+h_list = logspace(-5,1,300);  % Time step sizes
 global_error_euler = [];
 global_error_mid = [];
 rate_function_calls_mid = [];
